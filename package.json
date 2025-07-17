@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
   "test": "jest --runInBand --setupFilesAfterEnv ./tests/setup.ts ./tests/cleanup.ts",
   "test:task": "jest tests/task.test.ts --runInBand --setupFilesAfterEnv ./tests/setup.ts ./tests/cleanup.ts",
   "test:coverage": "jest --coverage"

@@ -37,14 +37,35 @@ app.get('/', (req, res) => {
 });
 
 // MongoDB connection + server start
+mongoose.connection.on('connecting', () => {
+  console.log('🔄 Connecting to MongoDB...');
+});
+
+mongoose.connection.on('connected', () => {
+  console.log('✅ MongoDB connected successfully');
+  console.log('📍 Connected to:', mongoose.connection.name);
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error('❌ MongoDB connection error:', err);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.log('⚠️ MongoDB disconnected');
+});
+
+console.log('🔗 Attempting to connect to MongoDB...');
+console.log('📍 MongoDB URI:', MONGODB_URI.replace(/\/\/.*@/, '//***:***@')); // Hide credentials
+
 mongoose
   .connect(MONGODB_URI)
   .then(() => {
-    console.log('MongoDB connected');
+    console.log('✅ MongoDB connection established');
     app.listen(PORT, () => {
-      console.log(`Server running at http://localhost:${PORT}`);
+      console.log(`🚀 Server running on port ${PORT}`);
     });
   })
   .catch((err) => {
-    console.error('MongoDB connection failed:', err);
+    console.error('💥 MongoDB connection failed:', err.message);
+    console.error('Full error:', err);
   });

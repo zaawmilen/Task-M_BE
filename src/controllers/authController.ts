@@ -117,32 +117,32 @@ export const login = async (req: Request, res: Response) => {
 // Get current user (protected route)
 export const getCurrentUser = async (req: Request, res: Response) => {
   try {
-    // The auth middleware should have attached the user ID to req.user
     if (!req.user?.id) {
       console.log('No user ID found in request:', req.user);
       return res.status(401).json({ message: 'User ID is required' });
     }
-    const tasks = await Task.find({ user: req.user.id });
-    // Use either id or userId, whichever is available
-    const userId = req.user.id || req.user.userId;
-    
-    // Log for debugging
-    console.log('Looking up user with ID:', userId);
 
-    // Find user by ID and exclude password
-    const user = await User.findById(userId).select('-password');
+    const user = await User.findById(req.user.id).select('-password');
     if (!user) {
-      console.log('No user found with ID:', userId);
+      console.log('No user found with ID:', req.user.id);
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Return user data
-    res.status(200).json({user});
+    res.status(200).json({
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        createdAt: user.createdAt,
+      }
+    });
   } catch (error) {
     console.error('Error fetching current user:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
+
 // Add this to your authController.js/ts file
 // Fix the logout function in authController.ts
 export const logout = async (req: Request, res: Response): Promise<void> => {
